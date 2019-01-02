@@ -1,0 +1,212 @@
+na 03/01/2019 ot 9 chasa tursish na recepciata diana baneva ili nadejda laskova
+WEB FORMS Tutorial
+
+1.Files and Structure of Web FORMS
+- Every view(NameOfFile.aspx) file had a code behind (NameOfFile.aspx); This happens with CodeFile Attribute. Example from soccerWEbSite
+<%@ Page Title="Home Page" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true"
+EnableEventValidation="false" CodeFile="Default.aspx.cs" Inherits="Default" %> Here we have CodeFile="Default.aspx.cs"
+
+right click on view file click on CodeBehind we can see the CodeFile
+---------
+2.View State https://www.youtube.com/watch?v=Fn_08JLsrmY&t=17s
+Web Applications work on Http protocol. HTTP protocol is stateless protocol, meaning is does not retain state between user requests
+---------
+3. What is PostBack Event -check is the page rendered for first time or being loaded in response to a client post back
+Its a boolean property(true or false).
+Using usualy !isPostBack (is not a post back request)
+detail information https://www.youtube.com/watch?v=yZJQ4Z6kEzs
+
+Example: For Detail example see the TbiProject TestPostBack icon
+
+ When the button is clicked the drop down menu will add again the values
+Because the it will execute again here!
+1.One way to stop this is to Use Post Back
+
+2.Another way to solve this problem is to disable the ViewState of Drop Down
+There are problems with this approach
+- The View will not remember the view state (If we choose something from the drop down it will select again the first item)
+- Drop Down events may not work correctly as expected
+
+3.Another way to solve this is to clear all the Drop Down items every time see comment down
+- This is not efficient because we every time need to clear!
+---------
+4.Events
+---------
+5.Session - Sessions are in Global.asax file see TestForTbi project
+ Session is a unique instance of the browser. A single user can have multiple sessions, by visiting your application,
+with multiple instances of the browser running with a different session-id on the machine.
+	
+How to get a new session-id and force the Session_Start() event to execute?
+- Close the existing browser window and then open a new instance of the browser
+- Open a new instance of a different browser
+- Use Cookie-less Session : <sessionState mode="InProc" cookieless="true"></sessionState>
+ToDo Watch : https://www.youtube.com/watch?v=Lvt1BnSwRvo Difference between ViewState SessionState and ApplicationState	
+
+More about Sessions:
+Points to remember about session state variables:
+1. Session state variables are stored on the web server by default, and are kept for the life time of a session.
+2. The default session state mode is InProc. We will discuss about different session state modes in a later video session.
+3. The life time of a session is determined by the timeout value in web.config file. The default is 20 minutes. The time-out value can be adjusted according, to your application requirements.
+<sessionState mode="InProc" timeout="30"></sessionState>
+4. Session state variables are available across all pages, but only for a given single session. Session variables are like single-user global data.
+5. It is always a good practice to check, if a session state variable is null before calling any of its methods, such as ToString(). Otherwise, we may run into runtime NullReferenceExceptions.
+if (Session["Name"] != null)
+{
+    lblName.Text = Session["Name"].ToString();    
+}
+6. Application performance can be improved by disabling session state, if it's not required. Session state can be turned off at the page or application level.
+
+To turn of the session state at the page level, set EnableSessionState="False" in the page directive
+<%@ Page Language="C#" EnableSessionState="False" AutoEventWireup="true" CodeBehind="WebForm1.aspx.cs" Inherits="AdoDemo.WebForm1" %>
+
+To turn of the session state at the application level, set SessionState mode=false in web.config file.
+<sessionState mode="Off"></sessionState> 
+---------
+6. Events in the page life cycle of an asp.net web application
+The following are some of the commonly used events in the life cycle of an asp.net webform.
+ These events are shown in order of occurrence, except for, Error event, which occurs only if there is an unhandled exception.
+ 
+- PreInit - As the name suggests, this event happens just before page initialization event starts. 
+ IsPostBack, IsCallback and IsCrossPagePostBack properties are set at this stage.
+ This event allows us to set the master page and theme of a web application dynamically. 
+ PreInit is extensively used when working with dynamic controls.
+
+- Init - Page Init, event occurs after the Init event, of all the individual controls on the webform. Use this event to read or initialize control properties. 
+The server controls are loaded and initialized from the Web form’s view state. You can see all server controls in the Toolbox
+ when you are in design view(Right click on page First option is design view)
+ under Standart tab see the beggining of: https://www.youtube.com/watch?v=xlxyiO6HWbU
+
+- InitComplete - As the name says, this event gets raised immediately after page initialization.
+
+- PreLoad - Happens just before the Page Load event.
+
+- Load - Page Load event, occurs before the load event of all the individual controls on that webform. 
+------
+all events up are when loading the page, after the page is load down we have some other events.
+Important!!!
+Now here before the Load Complete Event is Executed the Server will execute the Cashed events(see cashed events information) then
+ PostBack Events (see down PostBack events)
+
+First will be executed the Cashed Events see down the cashed events. 
+
+PostBack event are like validation, button clicked , textbox changed....
+------
+Control Events - After the Page load event, the control events like button's click, dropdownlist's selected index changed events are raised.
+
+- Load Complete - This event is raised after the control events are handled.
+
+- PreRender - This event is raised just before the rendering stage of the page. 
+
+- PreRenderComplete - Raised immediately after the PreRender event.
+
+- Unload - Raised for each control and then for the page. At this stage the page is, unloaded from memory.
+
+- Error - This event occurs only if there is an unhandled exception. 
+---------
+7. ASP.Net Server Control Events  Important ToolBox did not start if the project is run!!!
+This events are like TextBox, Button, DropDownList. For example Button has a click event. TextBox has TextChanged event. DropDownList has SelectedIndexChanged
+The events that all these controls expose, can be broadly divided into 3 categories.
+
+Postback events - These events submit the Web page, immediately to the server for processing. Click event of a button control is an example for PostBack event.
+
+Cached events - These events are saved in the page’s view state to be processed when a postback event occurs. TextChanged event of TextBox control, 
+and SelectedIndexChanged event of a DropDownList control are examples of cached events. 
+Cached events can be converted into postback events, by setting the AutoPostBack property of the control to true.
+
+Validation events - These events occur on the client, before the page is posted back to the server. All validation controls use these type of events. 
+
+Example of CashedEvent: see the TBIproject Default.aspx.cs file TextBox1_TextChanged method
+To make this method you need to double click on Textbox in DesignView
+If in the design view right click on text box select properties.
+There is an AutoPostBackEvent which is false, if you changed it to true
+When the text in box is changed it will execute the this method
+
+Example of Validation event: 
+Make an RequiredFieldValidator in properties there is an ControlToValidate property there set to the textbox you want(seeTbiProject)!
+If we now click to button when the text is empty the validator will execute and we will see an error message: RequiredFieldValidator 
+The Validation event is using javascipt
+---------
+7. Controls Information
+More Detail Information about the ASP.NET Controls can been seen on this pages
+- TextBox http://csharp-video-tutorials.blogspot.com/2012/10/aspnet-textbox-control-part-10.html
+- Radio Button http://csharp-video-tutorials.blogspot.com/2012/10/aspnet-radio-button-control-part-11.html
+- Radio-Button http://csharp-video-tutorials.blogspot.com/2012/10/aspnet-checkbox-control-part-12.html
+- HyperLink - is used to create a link to other page, http://csharp-video-tutorials.blogspot.com/2012/10/aspnet-hyperlink-control-part-13.html
+- Button, LinkButton and ImageButton controls - http://csharp-video-tutorials.blogspot.com/2012/10/aspnet-button-linkbutton-and.html
+
+All Events of an Control can be seen when we go to design.view properties or if we type the Id of the event and look for Flashes
+
+8. Page Navigation Techniques - Hyperlink control, Response.Redirect, Server.Transfer, Server.Execute, Cross-Page postback
+
+- HyperLink control Example:
+ <asp:HyperLink ID="HyperLink1" NavigateUrl="TestPostBack.aspx" Text="Go to PostBack_Example" runat="server"></asp:HyperLink>
+ <asp:HyperLink ID="HyperLink2" NavigateUrl="https://gong.bg/" Text="Go to gong.bg" runat="server"></asp:HyperLink>
+	 
+Using hyperlink, you can navigate to another page with in the same application or to an external web site. 
+The hyperlink control is rendered as an HTML anchor tag. We have discussed in detail about the 
+
+- Responce.Redirect Example is the same as HyperLink control. If we redirect to page and click back button the browser remember
+
+- Server.Transfer - There is Example in TestForTbi project in ServerTransfer_Example folder
+1. Just like hyperlink and Response.Redirect, Server.Transfer is used to navigate to other pages/sites running on the same web server.
+2. Server.Transfer cannot be used to navigate to sites/pages on a different web server.
+3. Server.Transfer does not change the URL in the address bar
+4. Server.Transfer is faster than Response.Redirect as the redirection happens on the server in one Request/Response cycle. Response.Redirect() involves 2 Request/Response cycles.
+5. With Server.Transfer the Form Variables from the original request are preserved.
+
+- Server.Execute  - The major difference between Server.Transfer and Server.Execute is that,
+ Server.Transfer terminates the execution of the current page and starts the execution of the new page,
+ where as Server.Execute process the second Web form without leaving the first Web form.
+ After completing the execution of the first webform, the control returns to the second webform. 
+ 
+- Cross-Page postback- Allows to post one page to another page(to another url address). By default when you click a button,
+ the webform post to itself. click, set the PostBackUrl of the button, to the page that you want to post to. 
+ You need to use PostBackUrl event!!!
+ Example going to other page and getting values TbiProject
+ <asp:Button ID="CrossPost"runat="server"PostBackUrl="TransferExamplePageSecond.aspx"OnClick="CrossPostMethod"Text="CrossPostButton" />
+ 
+ 12. Query String -How to make a query string! https://www.youtube.com/watch?v=1Es0kCfzZZs
+Points to remember about query strings
+1. Querystrings are name/value collection pairs
+2. Using querystrings, is a very comman way to send data from one webform to another.
+3. Query strings are appended to the page URL.
+4. ?(Question Mark), indicates the beginning of a query string and it's value.
+5. It is possible to use more than one query string. The first query string is specified using the ?(question mark). Subsequent query strings can be appended to the URL using the &(ampersand) symbol.
+6. There is a limit on the Query string length. Hence, Query strings cannot be used to send very long data.(2000 max)
+7. Query strings are visible to the user, hence should not be used to send sensitive information, unless encrypted.
+8. To read the query string value, use Request object's QueryString property.
+9. &(ampersand) is used to concatenate query strings, so if you want to send &, as value for the query string there are 2 ways, as shown below
+
+Example : in Tbi projct QueryStringSend folder 
+Response.Redirect("WebForm2.aspx?UserName=" + HttpUtility.UrlEncode(txtText.Text));
+Or
+Response.Redirect("WebForm2.aspx?UserName=" + txtText.Text + "&UserEmail=" + txtEmail.Text);
+
+13.Cookies for Sending Data
+Just like QueryStrings, Cookies can also be used to send data from one webform to another. In general, web sites use cookies to store user preferences or other information that is client-specific. Cookies store small amounts of information on the client’s machine.
+
+Cookies can be broadly classified into 2 types
+1. Persistent cookies - Remain on the client computer, even after the browser is closed. 
+   You can configure how long the cookies remain using the expires property of the HttpCookie object.
+2. Non-Persistent cookies - If you don't set the Expires property, then the cookie is called as a Non-Persistent cookie.
+ Non-Persistent cookies only remain in memory until the browser is closed. 
+See Example of Sending Cookies in TestForTbi project folder Cookies,
+ And there is a check in WebForm1 are the cookies in user browser with status ON Or Off
+ 
+ // 65 Serie of 
+ 
+ ------------
+ User controls - Web user controls combine one or more server or HTML controls 
+ They are similar to partial views in MVC
+ 1. First Create an Web User Control file like CallendarUserControl.ascx The file must be .ascx format
+ 2. Create some view and bussiness logic ...
+ 3. If you want to reused this view and logic in other files you can make this
+ - in view you want <%@ Register src="../UserControls_Example/CallendarUserControl.ascx" tagname="CalendarUserControl" tagprefix="uc1" %>
+ and
+ - <uc1:CalendarUserControl ID="CalendarUserControl1" runat="server" />
+ For more details see
+ http://csharp-video-tutorials.blogspot.com/2012/12/user-controls-in-aspnet-part-104.html
+ http://csharp-video-tutorials.blogspot.com/2012/12/adding-and-using-user-controls-on.html
+ There is example in TestForTbi project with callendar wich is implemented in Folder Session file WebForm1 and WebForm2
+ 
+ ------------
